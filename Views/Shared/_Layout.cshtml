@@ -1,0 +1,155 @@
+﻿@using AkimWigs.Web.Models
+@using AkimWigs.Web.Extensions
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    var cart = HttpContextAccessor.HttpContext?.Session.GetObject<List<CartItem>>("Cart")
+               ?? new List<CartItem>();
+    var cartCount = cart.Sum(c => c.Quantity);
+    var isAdminAuthenticated = HttpContextAccessor.HttpContext?.User?.IsInRole("Admin") ?? false;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    @* Titre SEO *@
+    <title>
+        @if (!string.IsNullOrEmpty(ViewData["Title"] as string))
+        {
+            @ViewData["Title"] @: | AkimWigs – Wigs & Lace Front
+        }
+        else
+        {
+            @:AkimWigs – Boutique de Wigs haut de gamme
+        }
+    </title>
+
+    @* Description par défaut, surchargée par ViewData["MetaDescription"] *@
+    @{
+        var metaDescription = ViewData["MetaDescription"] as string
+                              ?? "AkimWigs propose une sélection de lace front, closure et frontal wigs pensées pour sublimer les femmes noires et métissées. Livraison, conseils personnalisés et paiement sécurisé par Stripe.";
+    }
+    <meta name="description" content="@metaDescription" />
+
+    @* Optionnel : mots-clés *@
+    <meta name="keywords" content="wigs, lace front, closure, frontal, perruques, cheveux, AkimWigs" />
+    <meta name="author" content="AkimWigs" />
+
+    @* Open Graph pour les partages (Facebook, WhatsApp, etc.) *@
+    <meta property="og:site_name" content="AkimWigs" />
+    <meta property="og:title" content="@(ViewData["Title"] ?? "AkimWigs – Boutique de Wigs")" />
+    <meta property="og:description" content="@metaDescription" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="@($"{Context.Request.Scheme}://{Context.Request.Host}{Context.Request.Path}")" />
+    <meta property="og:image" content="~/images/wigs/akim-frontal-22-bodywave.png" />
+
+    @* Favicon *@
+    <link rel="icon" type="image/x-icon" href="~/favicon.ico?v=3" />
+<link rel="shortcut icon" href="~/favicon.ico?v=3" />
+
+
+
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/AkimWigs.styles.css" asp-append-version="true" />
+</head>
+
+
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg akim-navbar">
+            <div class="container">
+                <a class="navbar-brand fw-bold text-uppercase d-flex align-items-center gap-2"
+   asp-controller="Product" asp-action="Index">
+
+    <img src="~/images/favicon.png" 
+         alt="AkimWigs Logo" 
+         style="height: 28px; width: 28px; border-radius: 6px;" />
+
+    <span>Akim</span><span>Wigs</span>
+</a>
+
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#akimNavbar"
+                        aria-controls="akimNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="akimNavbar">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link active" asp-controller="Product" asp-action="Index">Boutique</a>
+                        </li>
+                        <li class="nav-item">
+    @if (isAdminAuthenticated)
+    {
+        <a class="nav-link" asp-controller="Admin" asp-action="Index">⚙️ Admin</a>
+    }
+    else
+    {
+        <a class="nav-link" asp-controller="Account" asp-action="Login">Connexion admin</a>
+    }
+</li>
+
+                    </ul>
+
+                    <ul class="navbar-nav mb-2 mb-lg-0">
+                        <li class="nav-item me-2">
+                            <a class="nav-link d-flex align-items-center" asp-controller="Cart" asp-action="Index">
+                                <span class="me-1">🛒 Panier</span>
+                                @if (cartCount > 0)
+                                {
+                                    <span class="akim-cart-badge">
+                                        @cartCount
+                                    </span>
+                                }
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top akim-footer text-muted mt-4">
+        <div class="container py-3 d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
+            <div class="small">
+                &copy; 2025 - <strong>AkimWigs</strong>. Tous droits réservés.
+            </div>
+            <div class="small akim-footer-contact d-flex flex-column flex-sm-row align-items-sm-center gap-sm-3">
+                <span>
+                    📞 <a href="tel:2403383363" class="akim-footer-link">240 338 3363</a>
+                </span>
+                <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+    <button type="submit" class="btn btn-link btn-sm text-muted">
+        Se déconnecter
+    </button>
+</form>
+
+                <span>
+                    📧 <a href="mailto:nemasou96@gmail.com" class="akim-footer-link">nemasou96@gmail.com</a>
+                </span>
+                <span>
+                    🔒 <a asp-area="" asp-controller="Home" asp-action="Privacy" class="akim-footer-link">Politique de confidentialité</a>
+                </span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

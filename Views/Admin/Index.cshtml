@@ -1,0 +1,125 @@
+﻿@using AkimWigs.Core.Models
+@model IEnumerable<Product>
+
+@{
+    ViewData["Title"] = "Gestion des wigs";
+}
+
+<section class="akim-admin-section py-4">
+    <div class="container">
+
+        <!-- HEADER ADMIN -->
+        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-3">
+            <div>
+                <h1 class="h4 fw-bold mb-1">Gestion des wigs</h1>
+                <p class="text-muted mb-0 small">
+                    Admin AkimWigs – ajoute, modifie ou supprime les modèles en ligne.
+                </p>
+            </div>
+
+            <a asp-action="Create" class="btn btn-akim-primary btn-lg">
+                + Ajouter une wig
+            </a>
+        </div>
+
+        <!-- BARRE RECHERCHE + FILTRES -->
+        <form asp-action="Index" method="get" class="akim-admin-filters mb-3">
+            <div class="row g-2 align-items-center">
+                <div class="col-md-5">
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text">🔍</span>
+                        <input type="text"
+                               name="search"
+                               value="@(ViewBag.Search as string)"
+                               class="form-control"
+                               placeholder="Rechercher par nom, texture, couleur..." />
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <select name="category" class="form-select form-select-sm">
+                        <option value="all">Toutes les catégories</option>
+                        @foreach (var cat in (IEnumerable<Category>)ViewBag.Categories)
+                        {
+                            <option value="@cat.Name"
+                                    selected="@( (ViewBag.SelectedCategory as string) == cat.Name ? "selected" : null)">
+                                @cat.Name
+                            </option>
+                        }
+
+                    </select>
+                </div>
+
+                <div class="col-md-3 d-flex gap-2 justify-content-md-end">
+                    <button type="submit" class="btn btn-outline-secondary btn-sm">
+                        Filtrer
+                    </button>
+                    <a asp-action="Index" class="btn btn-link btn-sm text-decoration-none">
+                        Réinitialiser
+                    </a>
+                </div>
+            </div>
+        </form>
+
+        <!-- TABLEAU PRODUITS -->
+        <div class="akim-admin-card table-responsive">
+            <table class="table align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Catégorie</th>
+                        <th>Prix</th>
+                        <th>Longueur</th>
+                        <th>Texture</th>
+                        <th>Couleur</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center text-muted py-4">
+                                Aucune wig trouvée. Essaie d’adapter la recherche ou
+                                <a asp-action="Create">ajoute un nouveau modèle</a>.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var p in Model)
+                        {
+                            <tr>
+                                <td class="fw-semibold">
+                                    @p.Name
+                                </td>
+                                <td>
+                                    @p.Category?.Name
+                                </td>
+                                <td>
+                                    @p.Price.ToString("0.00") $
+                                </td>
+                                <td>@p.Length</td>
+                                <td>@p.Texture</td>
+                                <td>@p.Color</td>
+                                <td class="text-end">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a asp-action="Edit" asp-route-id="@p.Id"
+                                           class="btn btn-outline-secondary">
+                                            Modifier
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@p.Id"
+                                           class="btn btn-outline-danger">
+                                            Supprimer
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</section>

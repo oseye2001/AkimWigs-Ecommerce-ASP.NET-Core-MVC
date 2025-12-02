@@ -1,0 +1,154 @@
+﻿@using AkimWigs.Web.Models
+@model List<CartItem>
+
+@{
+    ViewData["Title"] = "Votre panier – AkimWigs";
+
+    decimal subtotal = Model.Sum(p => p.Total);
+
+    // On récupère la livraison stockée en session (si déjà choisie)
+    decimal delivery = 0;
+    var deliveryStr = Context.Session.GetString("Delivery");
+    if (!string.IsNullOrEmpty(deliveryStr) && decimal.TryParse(deliveryStr, out var d))
+    {
+        delivery = d;
+    }
+    else
+    {
+        delivery = 12; // valeur par défaut : standard
+    }
+
+    decimal taxRate = 0.15m; // TVH 15%
+    decimal taxes = (subtotal + delivery) * taxRate;
+    decimal total = subtotal + delivery + taxes;
+}
+
+<div class="container py-4">
+
+    <h1 class="akim-section-title mb-3">Votre Panier 🛒</h1>
+
+    @if (!Model.Any())
+    {
+        <div class="akim-product-card p-4 text-center">
+            <h5 class="fw-bold mb-2">Votre panier est vide</h5>
+            <p class="text-muted mb-3">Ajoutez des wigs pour continuer votre commande.</p>
+            <a asp-controller="Product" asp-action="Index" class="btn btn-akim-primary">
+                Voir la boutique
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+
+            <!-- LISTE PRODUITS -->
+            <div class="col-lg-7">
+
+                @foreach (var item in Model)
+                {
+                    <div class="akim-cart-item d-flex align-items-center p-3 mb-3">
+
+                        <div class="akim-cart-img-wrapper">
+                            @if (!string.IsNullOrEmpty(item.ImageUrl))
+                            {
+                                <img src="@item.ImageUrl" alt="@item.Name" />
+                            }
+                            else
+                            {
+                                <div class="bg-secondary-subtle w-100 h-100 d-flex align-items-center justify-content-center">
+                                    <span class="small text-muted">Image</span>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="ms-3 flex-grow-1">
+                            <h5 class="fw-semibold mb-1">@item.Name</h5>
+
+                            <p class="small text-muted mb-2">
+                                Prix unitaire : @item.UnitPrice.ToString("0.00") $
+                            </p>
+
+                            <div class="d-flex align-items-center gap-3">
+
+                                <!-- Quantité -->
+                                <form asp-controller="Cart" asp-action="UpdateQuantity" method="post" class="d-flex align-items-center">
+                                    <input type="hidden" name="productId" value="@item.ProductId" />
+                                    <input type="number" name="quantity" min="1" value="@item.Quantity"
+                                           class="form-control form-control-sm akim-qty-input" />
+                                    <button type="submit" class="btn btn-sm btn-light ms-2">OK</button>
+                                </form>
+
+                                <!-- Supprimer -->
+                                <form asp-controller="Cart" asp-action="Remove" method="post">
+                                    <input type="hidden" name="productId" value="@item.ProductId" />
+                                    <button class="btn btn-sm btn-danger">Supprimer</button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="text-end fw-bold ms-3">
+                            @item.Total.ToString("0.00") $
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- RÉCAP / PAIEMENT -->
+            <div class="col-lg-5">
+                <div class="akim-product-card p-4">
+
+                    <h4 class="fw-bold mb-3">Résumé de la commande</h4>
+
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Sous-total</span>
+                        <strong>@subtotal.ToString("0.00") $</strong>
+                    </div>
+
+                    <hr />
+                    <h5 class="fw-semibold mb-2">Livraison</h5>
+
+                    <form method="post" asp-controller="Cart" asp-action="SetDelivery">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="delivery" value="12"
+                                   @(delivery == 12 ? "checked" : "") />
+                            <label class="form-check-label">Standard (2–5 jours) – 12 $</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="delivery" value="19"
+                                   @(delivery == 19 ? "checked" : "") />
+                            <label class="form-check-label">Express (24h–48h) – 19 $</label>
+                        </div>
+
+                        <button class="btn btn-outline-secondary btn-sm mt-2">Mettre à jour</button>
+                    </form>
+
+                    <hr />
+
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>Livraison</span>
+                        <strong>@delivery.ToString("0.00") $</strong>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>Taxes (15%)</span>
+                        <strong>@taxes.ToString("0.00") $</strong>
+                    </div>
+
+                    <div class="d-flex justify-content-between fs-5 mt-3">
+                        <span class="fw-bold">Total</span>
+                        <strong>@total.ToString("0.00") $</strong>
+                    </div>
+
+                    <!-- Bouton vers le Checkout (Stripe plus tard) -->
+                    <form asp-controller="Checkout" asp-action="Index" method="get" class="mt-4">
+                        <button class="btn btn-akim-primary w-100 btn-lg">
+                            Procéder au paiement 💳
+                        </button>
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    }
+</div>

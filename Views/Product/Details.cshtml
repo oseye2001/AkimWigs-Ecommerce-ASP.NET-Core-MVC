@@ -1,0 +1,186 @@
+﻿@using AkimWigs.Core.Models
+@model Product
+
+@{
+    ViewData["Title"] = Model.Name + " – AkimWigs";
+
+    var shortDesc = string.IsNullOrWhiteSpace(Model.Description)
+        ? $"{Model.Length} • {Model.Texture} • {Model.Color}"
+        : Model.Description;
+
+    ViewData["MetaDescription"] =
+        $"{Model.Name} chez AkimWigs : {shortDesc}. Lace front, closure ou frontal sélectionnés pour un rendu naturel, avec livraison et paiement sécurisé Stripe.";
+}
+
+<div class="akim-detail-bg py-4 py-md-5">
+    <div class="container">
+
+        <!-- Mini breadcrumb -->
+        <div class="akim-breadcrumb mb-3 small">
+            <a asp-controller="Product" asp-action="Index">Boutique</a>
+            <span class="mx-1">›</span>
+            <span>@(Model.Category?.Name ?? "Wig")</span>
+            <span class="mx-1">›</span>
+            <strong>@Model.Name</strong>
+        </div>
+
+        <div class="row g-4 align-items-start">
+
+            <!-- IMAGE PRINCIPALE -->
+            <div class="col-lg-5">
+                <div class="akim-product-card p-2 p-md-3">
+                    <div class="akim-product-img-wrapper" style="height:340px;">
+                        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                        {
+                            <img src="@Model.ImageUrl"
+                                 alt="@Model.Name"
+                                 class="w-100 h-100"
+                                 style="object-fit: cover;" />
+                        }
+                        else
+                        {
+                            <div class="bg-secondary-subtle w-100 h-100 d-flex align-items-center justify-content-center">
+                                <span class="text-muted">Image à venir</span>
+                            </div>
+                        }
+
+                        <span class="akim-product-tag">
+                            @(Model.Category?.Name ?? "Wig")
+                        </span>
+
+                        <span class="akim-price-badge position-absolute bottom-0 end-0 m-2 px-3 py-1 small">
+                            @Model.Price.ToString("0.00") $
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- INFOS PRODUIT -->
+            <div class="col-lg-7">
+                <div class="akim-product-card p-3 p-md-4">
+                    <h1 class="h3 fw-bold mb-2">@Model.Name</h1>
+
+                    <div class="d-flex flex-wrap gap-2 mb-3">
+                        <div class="akim-chip">
+                            <span class="akim-dot"></span>
+                            @Model.Length
+                        </div>
+                        <div class="akim-chip">
+                            <span class="akim-dot"></span>
+                            @Model.Texture
+                        </div>
+                        <div class="akim-chip">
+                            <span class="akim-dot"></span>
+                            @Model.Color
+                        </div>
+                    </div>
+
+                    <p class="mb-3 text-muted">
+                        @shortDesc
+                    </p>
+
+                    <div class="d-flex align-items-baseline gap-3 mb-3">
+                        <div class="h4 fw-bold mb-0">@Model.Price.ToString("0.00") $</div>
+                        <div class="small text-muted">
+                            Paiement sécurisé par Stripe
+                        </div>
+                    </div>
+
+                    <form asp-controller="Cart" asp-action="Add" method="post" class="mb-3">
+                        <input type="hidden" name="productId" value="@Model.Id" />
+                        <button type="submit" class="btn btn-akim-primary btn-lg">
+                            Ajouter au panier 💖
+                        </button>
+                    </form>
+
+                    <!-- Bloc rassurant -->
+                    <div class="akim-info-block p-3 p-md-3 mt-2">
+                        <div class="row g-2 small">
+                            <div class="col-md-4">
+                                <strong>Qualité sélectionnée</strong><br />
+                                Cheveux choisis pour un rendu naturel et une bonne tenue.
+                            </div>
+                            <div class="col-md-4">
+                                <strong>Conseil personnalisé</strong><br />
+                                Tu hésites sur la longueur ou la texture ? Écris à Akim avant ou après ta commande.
+                            </div>
+                            <div class="col-md-4">
+                                <strong>Livraison & suivi</strong><br />
+                                Options Standard ou Express, suivi partagé par message.
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- TU POURRAIS AUSSI AIMER -->
+        @{
+            var related = ViewBag.RelatedProducts as List<Product>;
+        }
+
+        @if (related != null && related.Any())
+        {
+            <div class="mt-4">
+                <h3 class="akim-section-title mb-2">Tu pourrais aussi aimer</h3>
+                <p class="akim-section-subtitle">
+                    D’autres modèles dans la même catégorie.
+                </p>
+
+                <div class="row g-3">
+                    @foreach (var p in related)
+                    {
+                        <div class="col-12 col-sm-6 col-md-4">
+                            <div class="akim-product-card-home h-100">
+                                <div class="akim-product-img-wrapper">
+                                    @if (!string.IsNullOrEmpty(p.ImageUrl))
+                                    {
+                                        <img src="@p.ImageUrl" alt="@p.Name" />
+                                    }
+                                    else
+                                    {
+                                        <div class="bg-secondary-subtle w-100 h-100 d-flex align-items-center justify-content-center">
+                                            <span class="small text-muted">Image</span>
+                                        </div>
+                                    }
+
+                                    <span class="akim-price-badge position-absolute bottom-0 end-0 m-2 px-3 py-1 small">
+                                        @p.Price.ToString("0.00") $
+                                    </span>
+>
+                                </div>
+
+                                <div class="p-3">
+                                    <h5 class="fw-semibold mb-1" style="min-height:2.4rem;">
+                                        @p.Name
+                                    </h5>
+                                    <p class="akim-product-meta mb-2">
+                                        @p.Length • @p.Texture • @p.Color
+                                    </p>
+
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <a asp-controller="Product"
+                                           asp-action="Details"
+                                           asp-route-id="@p.Id"
+                                           class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+                                            Voir
+                                        </a>
+
+                                        <form asp-controller="Cart" asp-action="Add" method="post" class="mb-0">
+                                            <input type="hidden" name="productId" value="@p.Id" />
+                                            <button type="submit" class="btn btn-akim-primary btn-sm rounded-pill px-3">
+                                                Ajouter 💖
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+    </div>
+</div>

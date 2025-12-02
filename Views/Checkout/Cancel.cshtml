@@ -1,0 +1,17 @@
+﻿@{
+    ViewData["Title"] = "Paiement annulé – AkimWigs";
+}
+
+<div class="container py-5 text-center">
+    <h1 class="akim-section-title mb-3">Paiement annulé</h1>
+    <p class="text-muted mb-4">
+        Votre paiement a été annulé. Vous pouvez modifier votre panier ou réessayer.
+    </p>
+
+    <a asp-controller="Cart" asp-action="Index" class="btn btn-akim-primary me-2">
+        Retourner au panier
+    </a>
+    <a asp-controller="Product" asp-action="Index" class="btn btn-outline-secondary">
+        Continuer vos achats
+    </a>
+</div>

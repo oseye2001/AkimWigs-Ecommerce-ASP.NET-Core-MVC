@@ -1,0 +1,151 @@
+﻿@model AkimWigs.Web.Models.CheckoutViewModel
+
+@{
+    ViewData["Title"] = "Paiement – AkimWigs";
+}
+
+<div class="container py-4">
+    <h1 class="akim-section-title mb-3">Finaliser votre commande 💖</h1>
+
+    <div class="akim-checkout-steps mb-4">
+        <div class="akim-step akim-step-completed">
+            <div class="akim-step-circle">1</div>
+            <div class="akim-step-label">Panier</div>
+        </div>
+        <div class="akim-step akim-step-active">
+            <div class="akim-step-circle">2</div>
+            <div class="akim-step-label">Infos & paiement</div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- FORMULAIRE INFOS CLIENT -->
+        <div class="col-lg-7">
+            <div class="akim-product-card p-3 p-md-4">
+                <h4 class="fw-bold mb-3">Informations de livraison</h4>
+
+                <form asp-action="Index" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <div class="mb-3">
+                        <label asp-for="FullName" class="form-label"></label>
+                        <input asp-for="FullName" class="form-control" />
+                        <span asp-validation-for="FullName" class="text-danger small"></span>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="Email" class="form-label"></label>
+                                <input asp-for="Email" class="form-control" />
+                                <span asp-validation-for="Email" class="text-danger small"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="Phone" class="form-label"></label>
+                                <input asp-for="Phone" class="form-control" />
+                                <span asp-validation-for="Phone" class="text-danger small"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="AddressLine1" class="form-label"></label>
+                        <input asp-for="AddressLine1" class="form-control" />
+                        <span asp-validation-for="AddressLine1" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="AddressLine2" class="form-label"></label>
+                        <input asp-for="AddressLine2" class="form-control" />
+                        <span asp-validation-for="AddressLine2" class="text-danger small"></span>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="City" class="form-label"></label>
+                                <input asp-for="City" class="form-control" />
+                                <span asp-validation-for="City" class="text-danger small"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="Province" class="form-label"></label>
+                                <input asp-for="Province" class="form-control" />
+                                <span asp-validation-for="Province" class="text-danger small"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="PostalCode" class="form-label"></label>
+                                <input asp-for="PostalCode" class="form-control" />
+                                <span asp-validation-for="PostalCode" class="text-danger small"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="Country" class="form-label"></label>
+                                <input asp-for="Country" class="form-control" />
+                                <span asp-validation-for="Country" class="text-danger small"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="text-danger small">
+                            Merci de corriger les champs en rouge.
+                        </div>
+                    }
+
+                    <button type="submit" class="btn btn-akim-primary btn-lg mt-3 w-100 w-md-auto">
+                        Payer maintenant avec Stripe 💳
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- RÉCAP COMMANDE -->
+        <div class="col-lg-5">
+            <div class="akim-product-card p-3 p-md-4">
+                <h4 class="fw-bold mb-3">Résumé de la commande</h4>
+
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Sous-total</span>
+                    <strong>@Model.Subtotal.ToString("0.00") $</strong>
+                </div>
+
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Livraison</span>
+                    <strong>@Model.Delivery.ToString("0.00") $</strong>
+                </div>
+
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Taxes (15%)</span>
+                    <strong>@Model.Taxes.ToString("0.00") $</strong>
+                </div>
+
+                <hr />
+
+                <div class="d-flex justify-content-between fs-5">
+                    <span class="fw-bold">Total</span>
+                    <strong>@Model.Total.ToString("0.00") $</strong>
+                </div>
+
+                <p class="small text-muted mt-3 mb-0">
+                    Le paiement est traité de manière sécurisée via Stripe
+                    (carte bancaire, Apple Pay, Google Pay...).
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

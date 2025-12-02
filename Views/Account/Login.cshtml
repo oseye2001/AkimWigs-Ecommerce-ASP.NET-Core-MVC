@@ -1,0 +1,39 @@
+﻿@model AkimWigs.Web.Models.LoginViewModel
+
+@{
+    ViewData["Title"] = "Connexion admin";
+}
+
+<div class="container my-5" style="max-width: 480px;">
+    <div class="akim-product-card p-4">
+        <h1 class="h4 fw-bold mb-3 text-center">Connexion administrateur</h1>
+        <p class="text-muted small text-center mb-4">
+            Accès réservé à Akim pour la gestion des wigs.
+        </p>
+
+        <form asp-action="Login" method="post">
+            <input type="hidden" asp-for="ReturnUrl" />
+
+            <div class="mb-3">
+                <label asp-for="Username" class="form-label">Nom d'utilisateur</label>
+                <input asp-for="Username" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Password" class="form-label">Mot de passe</label>
+                <input asp-for="Password" type="password" class="form-control" />
+            </div>
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="alert alert-danger py-2 small">
+                    Identifiants incorrects. Réessaie.
+                </div>
+            }
+
+            <button type="submit" class="btn btn-akim-primary w-100">
+                Se connecter
+            </button>
+        </form>
+    </div>
+</div>

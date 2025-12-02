@@ -1,0 +1,63 @@
+﻿@model AkimWigs.Core.Models.Product
+
+@{
+    ViewData["Title"] = "Ajouter une wig";
+}
+
+<div class="container py-4">
+    <h2 class="mb-3">Ajouter une wig</h2>
+
+    <div class="akim-product-card p-4">
+        <form asp-action="Create" method="post">
+            <div class="mb-3">
+                <label class="form-label">Nom</label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Description</label>
+                <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="row">
+                <div class="mb-3 col-md-4">
+                    <label class="form-label">Prix</label>
+                    <input asp-for="Price" class="form-control" />
+                    <span asp-validation-for="Price" class="text-danger"></span>
+                </div>
+                <div class="mb-3 col-md-4">
+                    <label class="form-label">Longueur</label>
+                    <input asp-for="Length" class="form-control" />
+                </div>
+                <div class="mb-3 col-md-4">
+                    <label class="form-label">Texture</label>
+                    <input asp-for="Texture" class="form-control" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="mb-3 col-md-6">
+                    <label class="form-label">Couleur</label>
+                    <input asp-for="Color" class="form-control" />
+                </div>
+                <div class="mb-3 col-md-6">
+                    <label class="form-label">Image URL</label>
+                    <input asp-for="ImageUrl" class="form-control" />
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Catégorie</label>
+                <select asp-for="CategoryId" asp-items="ViewBag.Categories" class="form-select">
+                    <option value="">-- Sélectionner une catégorie --</option>
+                </select>
+                <span asp-validation-for="CategoryId" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-akim-primary me-2">Enregistrer</button>
+            <a asp-action="Index" class="btn btn-outline-secondary">Annuler</a>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,8 @@
+User-agent: *
+Disallow: /Admin
+Disallow: /Cart
+Disallow: /Checkout/Cancel
+
+Allow: /
+
+Sitemap: https://ton-domaine-ou-localhost/sitemap.xml
